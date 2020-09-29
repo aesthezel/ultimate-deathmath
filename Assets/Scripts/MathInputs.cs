@@ -21,6 +21,8 @@ public class MathInputs : MonoBehaviour
     int secondNumberContainer;
     char symbolContainer;
 
+    int turn;
+
     bool finished;
 
     
@@ -32,6 +34,7 @@ public class MathInputs : MonoBehaviour
 
     void Update()
     {
+        EditResult();
         // resultScreen.text = inputNumber.text;
     }
 
@@ -86,21 +89,34 @@ public class MathInputs : MonoBehaviour
     public void OnPressSymbols(string symbol)
     {
 
-        if(symbol != "=")
+        if (symbol != "@")
         {
-            char symbolChar = Convert.ToChar(symbol);
-            ContainText(inputNumber.text, symbolChar);
-            equalButton.interactable = true;
-        }
-        else
-        {
-            secondNumberContainer = inputNumber.text == "" ? 0 : Convert.ToInt32(inputNumber.text);
-            EditResult();
-            resultScreen.text = Convert.ToString(MathOperation(firstNumberContainer, secondNumberContainer, symbolContainer));
-            equalButton.interactable = false;
-            inputNumber.interactable = false;
+            if(symbol != "=")
+            {
+                char symbolChar = Convert.ToChar(symbol);
+                ContainText(inputNumber.text, symbolChar);
+                equalButton.interactable = true;
+                turn = 1;
+                inputNumber.text = "";
+                //inputNumber.text = "";
+            }
+            else
+            {
+                secondNumberContainer = inputNumber.text == "" ? 0 : Convert.ToInt32(inputNumber.text);
+                inputNumber.text = "";
+                turn = 2;
+                //EditResult();
+                //resultScreen.text = Convert.ToString(MathOperation(firstNumberContainer, secondNumberContainer, symbolContainer));
+                equalButton.interactable = false;
+                inputNumber.interactable = false;
 
+            }         
+        } 
+        else 
+        {
+            ResetCalc();
         }
+
     }
 
     public void ContainText(string textNumber, char symbol)
@@ -108,21 +124,33 @@ public class MathInputs : MonoBehaviour
         firstNumberContainer = Convert.ToInt32(textNumber);
         symbolContainer = symbol;
         DisableMathButtons(true);
-        EditResult();
+        //EditResult();
 
     }
 
     void EditResult()
     {
-        switch (secondNumberContainer)
+        // switch (secondNumberContainer)
+        // {
+        //     case 0:
+        //     resultScreen.text = Convert.ToString(firstNumberContainer + " " + symbolContainer);
+        //     inputNumber.text = "";
+        //     break;
+        //     default:
+        //     resultScreen.text = Convert.ToString(firstNumberContainer + " " + symbolContainer + " " + secondNumberContainer);
+        //     inputNumber.text = "";
+        //     break;
+        // }
+        switch (turn)
         {
             case 0:
-            resultScreen.text = Convert.ToString(firstNumberContainer + " " + symbolContainer);
-            inputNumber.text = "";
+                resultScreen.text = inputNumber.text;
+            break;
+            case 1:
+                resultScreen.text = Convert.ToString(firstNumberContainer + " " + symbolContainer + " " + inputNumber.text);
             break;
             default:
-            resultScreen.text = Convert.ToString(firstNumberContainer + " " + symbolContainer + " " + secondNumberContainer);
-            inputNumber.text = "";
+                resultScreen.text = Convert.ToString(MathOperation(firstNumberContainer, secondNumberContainer, symbolContainer));
             break;
         }
     }
@@ -154,5 +182,16 @@ public class MathInputs : MonoBehaviour
         finished = true;
 
         return result;
+    }
+
+    void ResetCalc()
+    {
+        turn = 0;
+        inputNumber.text = "";
+        firstNumberContainer = 0;
+        secondNumberContainer = 0;
+        symbolContainer = '_';
+        inputNumber.interactable = true;
+        finished = false;
     }
 }
