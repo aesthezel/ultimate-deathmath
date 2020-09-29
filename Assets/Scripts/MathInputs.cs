@@ -30,6 +30,11 @@ public class MathInputs : MonoBehaviour
         equalButton.interactable = false;
     }
 
+    void Update()
+    {
+        // resultScreen.text = inputNumber.text;
+    }
+
     void DisableMathButtons(bool status)
     {
 
@@ -109,7 +114,6 @@ public class MathInputs : MonoBehaviour
 
     void EditResult()
     {
-
         switch (secondNumberContainer)
         {
             case 0:
