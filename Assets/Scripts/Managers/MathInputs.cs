@@ -8,24 +8,27 @@ using TMPro;
 public class MathInputs : MonoBehaviour
 {
 
+    // Texto
     public TMP_InputField inputNumber;
     public TextMeshProUGUI resultScreen;
 
+    // Botones
     public Button sumButton;
     public Button minusButton;
     public Button multiplyButton;
     public Button divideButton;
     public Button equalButton;
 
+    // Contenedores
     int firstNumberContainer;
     int secondNumberContainer;
     char symbolContainer;
 
+    // Modificadores de la partida
     int turn;
-
     bool finished;
 
-    
+    #region Funciones por defecto
     void Start()
     {
         DisableMathButtons(true);
@@ -34,10 +37,20 @@ public class MathInputs : MonoBehaviour
 
     void Update()
     {
-        EditResult();
+        if (finished)
+        {
+            return;
+        } 
+        else 
+        {
+            EditResult();
+        }
+
         // resultScreen.text = inputNumber.text;
     }
+    #endregion
 
+    #region Interacciones con la interfaz
     void DisableMathButtons(bool status)
     {
 
@@ -85,7 +98,6 @@ public class MathInputs : MonoBehaviour
 
     }
 
-
     public void OnPressSymbols(string symbol)
     {
 
@@ -118,7 +130,9 @@ public class MathInputs : MonoBehaviour
         }
 
     }
+    #endregion
 
+    #region Modificadores de entrada y calculadora
     public void ContainText(string textNumber, char symbol)
     {
         firstNumberContainer = Convert.ToInt32(textNumber);
@@ -141,6 +155,10 @@ public class MathInputs : MonoBehaviour
         //     inputNumber.text = "";
         //     break;
         // }
+
+        CombatManager combat = GameObject.FindWithTag("GameController").GetComponent<CombatManager>();
+        int result = 0;
+
         switch (turn)
         {
             case 0:
@@ -150,38 +168,15 @@ public class MathInputs : MonoBehaviour
                 resultScreen.text = Convert.ToString(firstNumberContainer + " " + symbolContainer + " " + inputNumber.text);
             break;
             default:
-                resultScreen.text = Convert.ToString(MathOperation(firstNumberContainer, secondNumberContainer, symbolContainer));
+                MathFormulas mathF = new MathFormulas();
+
+                result = mathF.TwoNumbersBasicOperations(firstNumberContainer, secondNumberContainer, symbolContainer);
+                combat.Fighting(combat.entityTurn, 1, result, "Hited");
+                resultScreen.text = Convert.ToString(result);
+
+                finished = true;
             break;
         }
-    }
-
-    // Funcion final
-    int MathOperation(int firstNumber, int secondNumber, char symbol)
-    {
-        int result;
-
-        switch (symbol)
-        {
-            case '+':
-                result = firstNumber + secondNumber;
-                break;
-            case '-':
-                result = firstNumber - secondNumber;
-                break;
-            case '*':
-                result = firstNumber * secondNumber;
-                break;
-            case '/':
-                result = firstNumber / secondNumber;
-                break;
-            default:
-                result = 0;
-                break;
-        }
-
-        finished = true;
-
-        return result;
     }
 
     void ResetCalc()
@@ -194,4 +189,5 @@ public class MathInputs : MonoBehaviour
         inputNumber.interactable = true;
         finished = false;
     }
+    #endregion
 }
